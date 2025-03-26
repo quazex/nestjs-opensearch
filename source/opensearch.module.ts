@@ -7,7 +7,7 @@ import { OpenSearchOptions } from './opensearch.types';
 @Module({})
 export class OpenSearchModule {
     public static forRoot(options: OpenSearchOptions): DynamicModule {
-        const optionsProvider = OpenSearchProviders.getOptions(options, options.name);
+        const optionsProvider = OpenSearchProviders.getOptions(options);
         const clientProvider = OpenSearchProviders.getClient(options.name);
 
         const dynamicModule: DynamicModule = {

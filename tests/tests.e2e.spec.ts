@@ -4,7 +4,7 @@ import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
 import { TestingOpenSearchFactory } from './tests.factory';
 import { TestingData } from './tests.types';
 
-describe('Opensearch > E2E', () => {
+describe('OpenSearch > E2E', () => {
     const tModule = new TestingOpenSearchFactory();
 
     beforeAll(tModule.init.bind(tModule));

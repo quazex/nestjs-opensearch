@@ -10,7 +10,7 @@ jest.mock('@opensearch-project/opensearch', () => ({
     Client: jest.fn(),
 }));
 
-describe('Opensearch > Unit', () => {
+describe('OpenSearch > Unit', () => {
     test('forRoot()', async() => {
         const tBuilder = Test.createTestingModule({
             imports: [
@@ -61,7 +61,7 @@ describe('Opensearch > Unit', () => {
 
     test('forRootAsync with useExisting()', async() => {
         @Injectable()
-        class OpensearchConfig implements OpenSearchOptionsFactory {
+        class OpenSearchConfig implements OpenSearchOptionsFactory {
             public createOpenSearchOptions(): OpenSearchOptions {
                 return {
                     node: faker.internet.url(),
@@ -70,8 +70,8 @@ describe('Opensearch > Unit', () => {
         }
 
         @Module({
-            providers: [OpensearchConfig],
-            exports: [OpensearchConfig],
+            providers: [OpenSearchConfig],
+            exports: [OpenSearchConfig],
         })
         class ConfigModule {}
 
@@ -79,7 +79,7 @@ describe('Opensearch > Unit', () => {
             imports: [
                 OpenSearchModule.forRootAsync({
                     imports: [ConfigModule],
-                    useExisting: OpensearchConfig,
+                    useExisting: OpenSearchConfig,
                     name: faker.string.alpha({ length: 10 }),
                 }),
             ],
