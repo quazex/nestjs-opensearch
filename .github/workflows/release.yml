@@ -37,9 +37,10 @@ jobs:
         run: npm ci
 
       - name: Build module
-        run: npm run bundle:compile
+        run: npm run build:compile
 
       - name: Release
         run: npm run release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
