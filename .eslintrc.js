@@ -7,6 +7,7 @@ module.exports = {
         sourceType: 'module',
     },
     ignorePatterns: [
+        'lib',
         '.eslintrc.*',
     ],
     rules: {

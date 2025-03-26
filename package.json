@@ -14,12 +14,26 @@
     "publishConfig": {
         "access": "public"
     },
+    "main": "lib/index.js",
+    "types": "lib/index.d.ts",
+    "files": [
+        "lib/**"
+    ],
+    "keywords": [
+        "opensearch",
+        "elasticsearch",
+        "nestjs",
+        "nest",
+        "typescript",
+        "nodejs",
+        "node"
+    ],
     "scripts": {
-        "build:clear": "rimraf build",
+        "build:clear": "rimraf lib",
         "build:compile": "npm run build:clear && tsc --project tsconfig.build.json",
         "dev:watch": "tsc --watch",
         "dev:check": "tsc --noEmit",
-        "dev:lint": "eslint ./source --ext .ts,.tsx",
+        "dev:lint": "eslint ./source --ext .ts",
         "dev:format": "npm run dev:lint -- --fix",
         "dev:test": "jest",
         "commit": "git-cz",

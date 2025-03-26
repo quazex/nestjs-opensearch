@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "outDir": "dist",
+        "outDir": "lib",
         "module": "CommonJS",
         "moduleResolution": "Node",
         "esModuleInterop": true,
@@ -33,6 +33,7 @@
         "tests"
     ],
     "exclude": [
+        "lib",
         "node_modules"
     ]
 }
