@@ -42,7 +42,7 @@ export class AppModule {}
 
 ### Using OpenSearch Service
 
-Once the module is registered, you can inject the `OpenSearchService` into your providers or controllers:
+Once the module is registered, you can inject instance of `Client` into your providers:
 
 ```typescript
 import { Injectable } from '@nestjs/common';
