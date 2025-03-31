@@ -23,6 +23,9 @@ export class TestingOpenSearchFactory {
         const tProvider: FactoryProvider<TestingOpenSearchService> = {
             provide: this._token,
             useFactory: (client: Client) => ({
+                onApplicationShutdown: async(): Promise<void> => {
+                    await client.close();
+                },
                 write: async(data): Promise<BulkStats> => {
                     const response = await client.helpers.bulk({
                         datasource: data,
@@ -79,13 +82,10 @@ export class TestingOpenSearchFactory {
         });
 
         this._testing = await tModule.compile();
+        this._testing.enableShutdownHooks();
     }
 
     public async close(): Promise<void> {
-        const token = OpenSearchUtilities.getClientToken();
-        const client = this._testing.get<Client>(token);
-
-        await client.close();
         await this._testing.close();
         await this._container.stop();
     }

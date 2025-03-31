@@ -128,7 +128,7 @@ export class AppBootstrap implements OnApplicationShutdown {
     constructor(@InjectOpenSearch() private readonly openSearchClient: Client) {}
 
     public async onApplicationShutdown(): Promise<void> {
-        await this.client.close();
+        await this.openSearchClient.close();
     }
 }
 ```
