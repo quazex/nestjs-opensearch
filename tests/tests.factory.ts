@@ -92,7 +92,7 @@ export class TestingOpenSearchFactory {
         await this._container.stop();
     }
 
-    public getService(): TestingOpenSearchService {
+    public get service(): TestingOpenSearchService {
         return this._testing.get<TestingOpenSearchService>(this._token);
     }
 }

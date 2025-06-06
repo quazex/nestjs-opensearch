@@ -11,15 +11,11 @@ describe('OpenSearch > E2E', () => {
     afterAll(tModule.close.bind(tModule));
 
     test('Check connection', async() => {
-        const service = tModule.getService();
-        const isHealth = await service.ping();
-
+        const isHealth = await tModule.service.ping();
         expect(isHealth).toBe(true);
     });
 
     test('Check write/read operations', async() => {
-        const service = tModule.getService();
-
         const listCount = faker.number.int({ min: 2, max: 4 });
         const total = faker.number.int({ min: 10, max: 20 });
 
@@ -33,10 +29,10 @@ describe('OpenSearch > E2E', () => {
         }));
         const random = faker.helpers.arrayElement(data);
 
-        await service.write(data);
+        await tModule.service.write(data);
 
         for (let index = 0; index < 10; index += 1) {
-            const reply = await service.read(random.id);
+            const reply = await tModule.service.read(random.id);
             if (!reply) {
                 await setTimeout(1_000);
                 continue;
