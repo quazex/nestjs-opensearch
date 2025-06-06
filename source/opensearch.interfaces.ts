@@ -1,13 +1,12 @@
 import { InjectionToken, ModuleMetadata, OptionalFactoryDependency, Type } from '@nestjs/common';
-import { OpenSearchOptions } from './opensearch.types';
+import { ClientOptions } from '@opensearch-project/opensearch';
 
 export interface OpenSearchOptionsFactory {
-    createOpenSearchOptions(): Promise<OpenSearchOptions> | OpenSearchOptions;
+    createOpenSearchOptions(): Promise<ClientOptions> | ClientOptions;
 }
 
 export interface OpenSearchAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
-    name?: string;
     inject?: Array<InjectionToken | OptionalFactoryDependency>;
     useExisting?: Type<OpenSearchOptionsFactory>;
-    useFactory?: (...args: any[]) => Promise<OpenSearchOptions> | OpenSearchOptions;
+    useFactory?: (...args: any[]) => Promise<ClientOptions> | ClientOptions;
 }
