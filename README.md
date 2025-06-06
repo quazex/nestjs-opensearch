@@ -25,15 +25,15 @@ import { Module } from '@nestjs/common';
 import { OpenSearchModule } from '@quazex/nestjs-opensearch';
 
 @Module({
-  imports: [
-    OpenSearchModule.forRoot({
-        node: 'https://localhost:9200',
-        auth: {
-            username: 'your-username',
-            password: 'your-password',
-        },
-    }),
-  ],
+    imports: [
+        OpenSearchModule.forRoot({
+            node: 'https://localhost:9200',
+            auth: {
+                username: 'your-username',
+                password: 'your-password',
+            },
+        }),
+    ],
 })
 export class AppModule {}
 ```
@@ -49,17 +49,17 @@ import { InjectOpenSearch } from '@quazex/nestjs-opensearch';
 
 @Injectable()
 export class SearchService {
-    constructor(@InjectOpenSearch() private readonly openSearchClient: Client) {}
+    constructor(@InjectOpenSearch() private readonly client: Client) {}
 
     async createIndex(index: string, body: any) {
-        return this.openSearchClient.indices.create({
+        return this.client.indices.create({
             index,
             body,
         });
     }
 
     async indexDocument(index: string, id: string, body: any) {
-        return this.openSearchClient.index({
+        return this.client.index({
             index,
             id,
             body,
@@ -67,7 +67,7 @@ export class SearchService {
     }
 
     async search(index: string, query: any) {
-        return this.openSearchClient.search({
+        return this.client.search({
             index,
             body: query,
         });
@@ -86,7 +86,7 @@ import { OpenSearchModule } from '@quazex/nestjs-opensearch';
 @Module({
     imports: [
         OpenSearchModule.forRootAsync({
-            useFactory: async (config) => ({
+            useFactory: async (config: SomeConfigProvider) => ({
                 node: config.OPENSEARCH_NODE,
                 auth: {
                     username: config.OPENSEARCH_USERNAME,
@@ -94,7 +94,7 @@ import { OpenSearchModule } from '@quazex/nestjs-opensearch';
                 },
             }),
             inject: [
-                ConfigProvider,
+                SomeConfigProvider,
             ],
         }),
     ],
@@ -108,7 +108,12 @@ By default, this module doesn't manage client connection on application shutdown
 
 ```typescript
 // main.ts
+const app = await NestFactory.create(AppModule);
+
+// Starts listening for shutdown hooks
 app.enableShutdownHooks(); // <<<
+
+await app.listen(process.env.PORT ?? 3000);
 ```
 
 ```typescript
