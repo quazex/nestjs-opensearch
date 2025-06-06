@@ -2,9 +2,9 @@ import { Faker, faker } from '@faker-js/faker';
 import { describe, expect, jest, test } from '@jest/globals';
 import { Injectable, Module, ValueProvider } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { ClientOptions } from '@opensearch-project/opensearch';
 import { OpenSearchOptionsFactory } from '../source/opensearch.interfaces';
 import { OpenSearchModule } from '../source/opensearch.module';
-import { OpenSearchOptions } from '../source/opensearch.types';
 
 jest.mock('@opensearch-project/opensearch', () => ({
     Client: jest.fn(),
@@ -62,7 +62,7 @@ describe('OpenSearch > Unit', () => {
     test('forRootAsync with useExisting()', async() => {
         @Injectable()
         class OpenSearchConfig implements OpenSearchOptionsFactory {
-            public createOpenSearchOptions(): OpenSearchOptions {
+            public createOpenSearchOptions(): ClientOptions {
                 return {
                     node: faker.internet.url(),
                 };
@@ -80,7 +80,6 @@ describe('OpenSearch > Unit', () => {
                 OpenSearchModule.forRootAsync({
                     imports: [ConfigModule],
                     useExisting: OpenSearchConfig,
-                    name: faker.string.alpha({ length: 10 }),
                 }),
             ],
         });

@@ -3,7 +3,6 @@
 Core features:
 
 - Based on [official OpenSearch client for NodeJS](https://github.com/opensearch-project/opensearch-js);
-- Supports multiple instances;
 - Covered with unit and e2e tests;
 - Basic module without unnecessary boilerplate.
 
@@ -28,7 +27,6 @@ import { OpenSearchModule } from '@quazex/nestjs-opensearch';
 @Module({
   imports: [
     OpenSearchModule.forRoot({
-        name: 'my-opensearch', // optional
         node: 'https://localhost:9200',
         auth: {
             username: 'your-username',
@@ -82,16 +80,22 @@ export class SearchService {
 If you need dynamic configuration, use `forRootAsync`:
 
 ```typescript
+import { Module } from '@nestjs/common';
+import { OpenSearchModule } from '@quazex/nestjs-opensearch';
+
 @Module({
     imports: [
         OpenSearchModule.forRootAsync({
-            useFactory: async () => ({
-                node: process.env.OPENSEARCH_NODE,
+            useFactory: async (config) => ({
+                node: config.OPENSEARCH_NODE,
                 auth: {
-                    username: process.env.OPENSEARCH_USERNAME,
-                    password: process.env.OPENSEARCH_PASSWORD,
+                    username: config.OPENSEARCH_USERNAME,
+                    password: config.OPENSEARCH_PASSWORD,
                 },
             }),
+            inject: [
+                ConfigProvider,
+            ],
         }),
     ],
 })
@@ -100,21 +104,11 @@ export class AppModule {}
 
 ### Graceful shutdown
 
-By default, this module doesn't manage client connection on application shutdown. You can read more about lifecycle hooks on the NestJS [documentation page](https://docs.nestjs.com/fundamentals/lifecycle-events#application-shutdown). 
+By default, this module doesn't manage client connection on application shutdown. You can read more about lifecycle hooks on the NestJS [documentation page](https://docs.nestjs.com/fundamentals/lifecycle-events#application-shutdown).
 
 ```typescript
 // main.ts
-const app = await NestFactory.create(AppModule);
-
-app.useLogger(logger);
 app.enableShutdownHooks(); // <<<
-
-app.setGlobalPrefix('api');
-app.enableVersioning({
-    type: VersioningType.URI,
-});
-
-await app.listen(appConfig.port, '0.0.0.0');
 ```
 
 ```typescript
@@ -125,10 +119,10 @@ import { InjectOpenSearch } from '@quazex/nestjs-opensearch';
 
 @Injectable()
 export class AppBootstrap implements OnApplicationShutdown {
-    constructor(@InjectOpenSearch() private readonly openSearchClient: Client) {}
+    constructor(@InjectOpenSearch() private readonly client: Client) {}
 
     public async onApplicationShutdown(): Promise<void> {
-        await this.openSearchClient.close();
+        await this.client.close();
     }
 }
 ```

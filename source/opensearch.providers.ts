@@ -1,20 +1,19 @@
 import { FactoryProvider, Provider, ValueProvider } from '@nestjs/common';
-import { Client } from '@opensearch-project/opensearch';
+import { Client, ClientOptions } from '@opensearch-project/opensearch';
 import { OpenSearchAsyncOptions, OpenSearchOptionsFactory } from './opensearch.interfaces';
-import { OpenSearchOptions } from './opensearch.types';
-import { OpenSearchUtilities } from './opensearch.utilities';
+import { OpenSearchTokens } from './opensearch.tokens';
 
 export class OpenSearchProviders {
-    public static getOptions(options: OpenSearchOptions): ValueProvider<OpenSearchOptions> {
-        const optionsToken = OpenSearchUtilities.getOptionsToken(options.name);
+    public static getOptions(options: ClientOptions): ValueProvider<ClientOptions> {
+        const optionsToken = OpenSearchTokens.getOptions();
         return {
             provide: optionsToken,
             useValue: options,
         };
     }
 
-    public static getAsyncOptions(options: OpenSearchAsyncOptions): Provider<OpenSearchOptions> {
-        const optionsToken = OpenSearchUtilities.getOptionsToken(options.name);
+    public static getAsyncOptions(options: OpenSearchAsyncOptions): Provider<ClientOptions> {
+        const optionsToken = OpenSearchTokens.getOptions();
         if (options.useFactory) {
             return {
                 provide: optionsToken,
@@ -25,7 +24,7 @@ export class OpenSearchProviders {
         if (options.useExisting) {
             return {
                 provide: optionsToken,
-                useFactory: async(factory: OpenSearchOptionsFactory): Promise<OpenSearchOptions> => {
+                useFactory: async(factory: OpenSearchOptionsFactory): Promise<ClientOptions> => {
                     const client = await factory.createOpenSearchOptions();
                     return client;
                 },
@@ -35,12 +34,12 @@ export class OpenSearchProviders {
         throw new Error('Must provide useFactory or useClass');
     }
 
-    public static getClient(name?: string): FactoryProvider<Client> {
-        const optionsToken = OpenSearchUtilities.getOptionsToken(name);
-        const clientToken = OpenSearchUtilities.getClientToken(name);
+    public static getClient(): FactoryProvider<Client> {
+        const optionsToken = OpenSearchTokens.getOptions();
+        const clientToken = OpenSearchTokens.getClient();
         return {
             provide: clientToken,
-            useFactory: (options: OpenSearchOptions) => new Client(options),
+            useFactory: (options: ClientOptions) => new Client(options),
             inject: [optionsToken],
         };
     }

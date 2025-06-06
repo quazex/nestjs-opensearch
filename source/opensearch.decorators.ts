@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
-import { OpenSearchUtilities } from './opensearch.utilities';
+import { OpenSearchTokens } from './opensearch.tokens';
 
-export const InjectOpenSearch = (name?: string): ReturnType<typeof Inject> => {
-    const token = OpenSearchUtilities.getClientToken(name);
+export const InjectOpenSearch = (): ReturnType<typeof Inject> => {
+    const token = OpenSearchTokens.getClient();
     return Inject(token);
 };

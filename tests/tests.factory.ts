@@ -3,20 +3,20 @@ import { FactoryProvider } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Client } from '@opensearch-project/opensearch';
 import { BulkStats, CreateAction, CreateActionOperation } from '@opensearch-project/opensearch/lib/Helpers';
+import { ElasticsearchContainer, StartedElasticsearchContainer } from '@testcontainers/elasticsearch';
 import { OpenSearchModule } from '../source/opensearch.module';
-import { OpenSearchUtilities } from '../source/opensearch.utilities';
-import { OpenSearchContainerGeneric, OpenSearchContainerStarted } from './tests.container';
+import { OpenSearchTokens } from '../source/opensearch.tokens';
 import { TestingData, TestingOpenSearchService } from './tests.types';
 
 export class TestingOpenSearchFactory {
     private _testing: TestingModule;
-    private _container: OpenSearchContainerStarted;
+    private _container: StartedElasticsearchContainer;
 
     private _token = faker.string.alpha({ length: 10 });
     private _index = faker.string.alpha({ length: 10, casing: 'lower' });
 
     public async init(): Promise<void> {
-        const tContainer = new OpenSearchContainerGeneric();
+        const tContainer = new ElasticsearchContainer();
 
         this._container = await tContainer.start();
 
@@ -66,14 +66,14 @@ export class TestingOpenSearchFactory {
                 },
             }),
             inject: [
-                OpenSearchUtilities.getClientToken(),
+                OpenSearchTokens.getClient(),
             ],
         };
 
         const tModule = Test.createTestingModule({
             imports: [
                 OpenSearchModule.forRoot({
-                    node: this._container.getNodeUrl(),
+                    node: this._container.getHttpUrl(),
                 }),
             ],
             providers: [
@@ -82,6 +82,8 @@ export class TestingOpenSearchFactory {
         });
 
         this._testing = await tModule.compile();
+        this._testing = await this._testing.init();
+
         this._testing.enableShutdownHooks();
     }
 
