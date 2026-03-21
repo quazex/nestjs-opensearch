@@ -25,15 +25,15 @@ import { Module } from '@nestjs/common';
 import { OpenSearchModule } from '@quazex/nestjs-opensearch';
 
 @Module({
-    imports: [
-        OpenSearchModule.forRoot({
-            node: 'https://localhost:9200',
-            auth: {
-                username: 'your-username',
-                password: 'your-password',
-            },
-        }),
-    ],
+  imports: [
+    OpenSearchModule.forRoot({
+      node: 'https://localhost:9200',
+      auth: {
+        username: 'your-username',
+        password: 'your-password',
+      },
+    }),
+  ],
 })
 export class AppModule {}
 ```
@@ -49,29 +49,31 @@ import { InjectOpenSearch } from '@quazex/nestjs-opensearch';
 
 @Injectable()
 export class SearchService {
-    constructor(@InjectOpenSearch() private readonly client: Client) {}
+  private readonly INDEX_NAME = 'search_index'
 
-    async createIndex(index: string, body: any) {
-        return this.client.indices.create({
-            index,
-            body,
-        });
-    }
+  constructor(@InjectOpenSearch() private readonly client: Client) {}
 
-    async indexDocument(index: string, id: string, body: any) {
-        return this.client.index({
-            index,
-            id,
-            body,
-        });
-    }
+  async createIndex(body: any) {
+    return this.client.indices.create({
+      index: this.INDEX_NAME,
+      body,
+    });
+  }
 
-    async search(index: string, query: any) {
-        return this.client.search({
-            index,
-            body: query,
-        });
-    }
+  async indexDocument(id: string, body: any) {
+    return this.client.index({
+      index: this.INDEX_NAME,
+      id,
+      body,
+    });
+  }
+
+  async search(query: any) {
+    return this.client.search({
+      index: this.INDEX_NAME,
+      body: query,
+    });
+  }
 }
 ```
 
@@ -84,20 +86,20 @@ import { Module } from '@nestjs/common';
 import { OpenSearchModule } from '@quazex/nestjs-opensearch';
 
 @Module({
-    imports: [
-        OpenSearchModule.forRootAsync({
-            useFactory: async (config: SomeConfigProvider) => ({
-                node: config.OPENSEARCH_NODE,
-                auth: {
-                    username: config.OPENSEARCH_USERNAME,
-                    password: config.OPENSEARCH_PASSWORD,
-                },
-            }),
-            inject: [
-                SomeConfigProvider,
-            ],
-        }),
-    ],
+  imports: [
+    OpenSearchModule.forRootAsync({
+      useFactory: async (config: SomeConfigProvider) => ({
+        node: config.OPENSEARCH_NODE,
+        auth: {
+          username: config.OPENSEARCH_USERNAME,
+          password: config.OPENSEARCH_PASSWORD,
+        },
+      }),
+      inject: [
+        SomeConfigProvider,
+      ],
+    }),
+  ],
 })
 export class AppModule {}
 ```
@@ -114,22 +116,6 @@ const app = await NestFactory.create(AppModule);
 app.enableShutdownHooks(); // <<<
 
 await app.listen(process.env.PORT ?? 3000);
-```
-
-```typescript
-// app.bootstrap.ts
-import { Injectable, OnApplicationShutdown } from '@nestjs/common';
-import { Client } from '@opensearch-project/opensearch';
-import { InjectOpenSearch } from '@quazex/nestjs-opensearch';
-
-@Injectable()
-export class AppBootstrap implements OnApplicationShutdown {
-    constructor(@InjectOpenSearch() private readonly client: Client) {}
-
-    public async onApplicationShutdown(): Promise<void> {
-        await this.client.close();
-    }
-}
 ```
 
 ## License

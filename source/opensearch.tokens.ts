@@ -1,9 +1,4 @@
-export class OpenSearchTokens {
-    public static getOptions(): string {
-        return String('opensearch_module_options');
-    }
-
-    public static getClient(): string {
-        return String('opensearch_module_client');
-    }
+export enum OpenSearchTokens {
+  OPTIONS = 'opensearch_module_options',
+  CLIENT = 'opensearch_module_client',
 }
